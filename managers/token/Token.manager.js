@@ -1,79 +1,144 @@
-const jwt        = require('jsonwebtoken');
-const { nanoid } = require('nanoid');
-const md5        = require('md5');
-
+const jwt = require('jsonwebtoken');
 
 module.exports = class TokenManager {
+    constructor({ config }) {
+        this.accessTokenSecret = config.jwt.accessTokenSecret;
+        this.refreshTokenSecret = config.jwt.refreshTokenSecret;
+        this.accessTokenExpiry = config.jwt.accessTokenExpiry;
+        this.refreshTokenExpiry = config.jwt.refreshTokenExpiry;
 
-    constructor({config}){
-        this.config              = config;
-        this.longTokenExpiresIn  = '3y';
-        this.shortTokenExpiresIn = '1y';
-
-        this.httpExposed         = ['v1_createShortToken'];
+        this.httpExposed = ['get=refreshAccessToken']
     }
 
-    /** 
-     * short token are issue from long token 
-     * short tokens are issued for 72 hours 
-     * short tokens are connected to user-agent
-     * short token are used on the soft logout 
-     * short tokens are used for account switch 
-     * short token represents a device. 
-     * long token represents a single user. 
-     *  
-     * long token contains immutable data and long lived
-     * master key must exists on any device to create short tokens
+
+    async refreshAccessToken({ __headers }) {
+        const accessToken = await this._refreshAccessToken(__headers.authorization);
+        return { accessToken };
+    }
+
+    /**
+     * Generate access and refresh tokens
+     * @param {Object} payload - Data to encode in the token
+     * @returns {Object} Object containing both tokens
      */
-    genLongToken({userId, userKey}){
-        return jwt.sign(
-            { 
-                userKey, 
-                userId,
-            }, 
-            this.config.dotEnv.LONG_TOKEN_SECRET, 
-            {expiresIn: this.longTokenExpiresIn
-        })
-    }
-
-    genShortToken({userId, userKey, sessionId, deviceId}){
-        return jwt.sign(
-            { userKey, userId, sessionId, deviceId}, 
-            this.config.dotEnv.SHORT_TOKEN_SECRET, 
-            {expiresIn: this.shortTokenExpiresIn
-        })
-    }
-
-    _verifyToken({token, secret}){
-        let decoded = null;
+    async generateAuthTokens(payload) {
         try {
-            decoded = jwt.verify(token, secret);
-        } catch(err) { console.log(err); }
-        return decoded;
+            const sanitizedPayload = this._sanitizePayload(payload);
+            const accessToken = await this.createAccessToken(sanitizedPayload);
+            const refreshToken = await this.createRefreshToken(sanitizedPayload);
+
+            return {
+                accessToken,
+                refreshToken,
+                expiresIn: this._getExpiryTime(this.accessTokenExpiry)
+            };
+        } catch (error) {
+            throw new Error(`Error generating auth tokens: ${error.message}`);
+        }
     }
 
-    verifyLongToken({token}){
-        return this._verifyToken({token, secret: this.config.dotEnv.LONG_TOKEN_SECRET,})
+    /**
+     * Create an access token
+     * @param {Object} payload - Data to encode in the token
+     * @returns {String} Access token
+     */
+    async createAccessToken(payload) {
+        try {
+            return jwt.sign(payload, this.accessTokenSecret, {
+                expiresIn: this.accessTokenExpiry
+            });
+        } catch (error) {
+            throw new Error(`Error creating access token: ${error.message}`);
+        }
     }
-    verifyShortToken({token}){
-        return this._verifyToken({token, secret: this.config.dotEnv.SHORT_TOKEN_SECRET,})
+
+    /**
+     * Create a refresh token
+     * @param {Object} payload - Data to encode in the token
+     * @returns {String} Refresh token
+     */
+    async createRefreshToken(payload) {
+        try {
+            return jwt.sign(payload, this.refreshTokenSecret, {
+                expiresIn: this.refreshTokenExpiry
+            });
+        } catch (error) {
+            throw new Error(`Error creating refresh token: ${error.message}`);
+        }
     }
 
+    /**
+     * Verify and decode a token
+     * @param {String} token - Token to decode
+     * @param {String} type - Token type ('access' or 'refresh')
+     * @returns {Object} Decoded token payload
+     */
+    async verifyToken(token, type = 'access') {
+        try {
+            const secret = type === 'refresh' ? this.refreshTokenSecret : this.accessTokenSecret;
+            return jwt.verify(token, secret);
+        } catch (error) {
+            if (error.name === 'TokenExpiredError') {
+                throw new Error('Token has expired');
+            }
+            throw new Error(`Invalid token: ${error.message}`);
+        }
+    }
 
-    /** generate shortId based on a longId */
-    v1_createShortToken({__longToken, __device}){
+    /**
+     * Decode a token without verification
+     * @param {String} token - Token to decode
+     * @returns {Object} Decoded token payload
+     */
+    decodeToken(token) {
+        try {
+            return jwt.decode(token);
+        } catch (error) {
+            throw new Error(`Error decoding token: ${error.message}`);
+        }
+    }
 
+    /**
+     * Refresh an access token using a refresh token
+     * @param {String} refreshToken - Valid refresh token
+     * @returns {Object} New access token and its expiry
+     */
+    async _refreshAccessToken(refreshToken) {
+        try {
+            const decoded = await this.verifyToken(refreshToken, 'refresh');
+            const accessToken = await this.createAccessToken(this._sanitizePayload(decoded));
 
-        let decoded = __longToken;
-        console.log(decoded);
-        
-        let shortToken = this.genShortToken({
-            userId: decoded.userId, 
-            userKey: decoded.userKey,
-            sessionId: nanoid(),
-            deviceId: md5(__device),
-        });
+            return {
+                accessToken,
+                expiresIn: this._getExpiryTime(this.accessTokenExpiry)
+            };
+        } catch (error) {
+            throw new Error(`Error refreshing access token: ${error.message}`);
+        }
+    }
 
-        return { shortToken };
+    /**
+     * Sanitize payload by removing sensitive data
+     * @param {Object} payload - Payload to sanitize
+     * @returns {Object} Sanitized payload
+     * @private
+     */
+    _sanitizePayload(payload) {
+        const { password, exp, ita, ...sanitizedPayload } = payload;
+        return sanitizedPayload;
+    }
+
+    /**
+     * Convert expiry time string to timestamp
+     * @param {String} expiry - Expiry time string
+     * @returns {Number} Expiry timestamp
+     * @private
+     */
+    _getExpiryTime(expiry) {
+        const units = { s: 1, m: 60, h: 3600, d: 86_400 };
+        const match = expiry.match(/^(\d+)([smhd])$/);
+        if (!match) return 60 * 60 * 1000; // Default to 1 hour
+        const [, time, unit] = match;
+        return parseInt(time) * units[unit] * 1000; // Convert to milliseconds
     }
 }

@@ -1,0 +1,45 @@
+version: '3.9'
+
+services:
+  mongodb:
+    image: mongo:6.0 # Use the latest LTS version of MongoDB
+    container_name: mongodb_container
+    restart: unless-stopped
+    ports:
+      - "27017:27017" # Expose MongoDB's default port
+    # environment:
+    #   MONGO_INITDB_ROOT_USERNAME: root # Use secure credentials
+    #   MONGO_INITDB_ROOT_PASSWORD: password
+    volumes:
+      - mongodb_data:/data/db # Persist data with named volumes
+      - mongodb_config:/data/configdb
+    healthcheck:
+      test: [ "CMD", "mongo", "--eval", "db.adminCommand('ping')" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  valkey:
+    image: valkey/valkey:latest # Use the latest Valkey image
+    container_name: valkey_container
+    restart: unless-stopped
+    ports:
+      - "6379:6379" # Expose Valkey's default port (same as Redis for compatibility)
+    environment:
+      VALKEY_LOG_LEVEL: warning # Set log level to reduce verbosity
+      VALKEY_SAVE_INTERVAL: 60 # Configure save interval
+    volumes:
+      - valkey_data:/data # Persist Valkey data
+    healthcheck:
+      test: [ "CMD", "valkey-cli", "ping" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+volumes:
+  mongodb_data:
+    driver: local
+  mongodb_config:
+    driver: local
+  valkey_data:
+    driver: local

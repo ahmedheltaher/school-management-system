@@ -1,0 +1,639 @@
+{
+	"info": {
+		"_postman_id": "47d58d81-7b34-4f26-9b66-26ef5b8d5d7d",
+		"name": "school-management-system",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "16962442"
+	},
+	"item": [
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "createUser",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzdlZGFiNjViNzg5MjA1MjViM2E0M2EiLCJyb2xlIjoic3VwZXJBZG1pbiIsInNjaG9vbElkIjpudWxsLCJpYXQiOjE3MzY0NTQ2ODYsImV4cCI6MTczNjQ1NTU4Nn0.-8NhoiHHa8E3yz_KWYhZosmWRLNh3Jhk6GerI83fXT4",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"email\": \"john.d1qweoasdasdes@example.coam\",\n\t\"password\": \"SecurePassword123\",\n\t\"role\": \"schoolAdmin\",\n\t\"firstName\": \"John\",\n\t\"lastName\": \"Doe\",\n\t\"schoolId\": \"677f40d68169f2e8e7f5502b\"\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_ULR}}/user/createUser",
+							"host": [
+								"{{BASE_ULR}}"
+							],
+							"path": [
+								"user",
+								"createUser"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"admin@schools.com\",\n    \"password\": \"password\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_ULR}}/user/login",
+							"host": [
+								"{{BASE_ULR}}"
+							],
+							"path": [
+								"user",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "refreshAccessToken",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzdlZGFiNjViNzg5MjA1MjViM2E0M2EiLCJyb2xlIjoic3VwZXJBZG1pbiIsInNjaG9vbElkIjpudWxsLCJpYXQiOjE3MzY0NTQzNTUsImV4cCI6MTczNzA1OTE1NX0.0melfKiKR41IvqH1q_VWJPBVVQYCCBan5cvVzbW2n9M",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"admin@schools.com\",\n    \"password\": \"password\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_ULR}}/token/refreshAccessToken",
+							"host": [
+								"{{BASE_ULR}}"
+							],
+							"path": [
+								"token",
+								"refreshAccessToken"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "School",
+			"item": [
+				{
+					"name": "createSchool",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzdlZGFiNjViNzg5MjA1MjViM2E0M2EiLCJyb2xlIjoic3VwZXJBZG1pbiIsInNjaG9vbElkIjpudWxsLCJpYXQiOjE3MzYzOTI2NjcsImV4cCI6MTczNjM5MzU2N30.I3VyrVt0SKZ6gCgsCepnhX2RBhKq4OPyEl85MHidcyI",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"aqwsd\",\n    \"address\": {\n        \"street\": \"123 Elm Street\",\n        \"city\": \"Springfield\",\n        \"state\": \"Illinois\",\n        \"country\": \"USA\",\n        \"zipCode\": \"62704\"\n    },\n    \"contact\": {\n        \"phone\": \"+1-555-123-4567\",\n        \"email\": \"info@greenwoodhigh.edu\"\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_ULR}}/school/createSchool",
+							"host": [
+								"{{BASE_ULR}}"
+							],
+							"path": [
+								"school",
+								"createSchool"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "updateSchool",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzdlZGFiNjViNzg5MjA1MjViM2E0M2EiLCJyb2xlIjoic3VwZXJBZG1pbiIsInNjaG9vbElkIjpudWxsLCJpYXQiOjE3MzYzOTI2NjcsImV4cCI6MTczNjM5MzU2N30.I3VyrVt0SKZ6gCgsCepnhX2RBhKq4OPyEl85MHidcyI",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"aqwsd\",\n    \"address\": {\n        \"street\": \"123 Elm Street\",\n        \"city\": \"Springfield\",\n        \"state\": \"Illinois\",\n        \"country\": \"USA\",\n        \"zipCode\": \"62704\"\n    },\n    \"contact\": {\n        \"phone\": \"+1-555-123-4567\",\n        \"email\": \"info@greenwoodhigh.edu\"\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_ULR}}/school/createSchool",
+							"host": [
+								"{{BASE_ULR}}"
+							],
+							"path": [
+								"school",
+								"createSchool"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getSchoolById",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzdlZGFiNjViNzg5MjA1MjViM2E0M2EiLCJyb2xlIjoic3VwZXJBZG1pbiIsInNjaG9vbElkIjpudWxsLCJpYXQiOjE3MzY0NTUzOTAsImV4cCI6MTczNjQ1NjI5MH0.7SQjCbinNRsBLFVlnrE_ZIxt55XIf-IRzvwuwWFGWfA",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"schoolId\":\"677f41451ee9565ec6c0e399\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_ULR}}/school/getSchoolById",
+							"host": [
+								"{{BASE_ULR}}"
+							],
+							"path": [
+								"school",
+								"getSchoolById"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getSchoolAdmins",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzdlZGFiNjViNzg5MjA1MjViM2E0M2EiLCJyb2xlIjoic3VwZXJBZG1pbiIsInNjaG9vbElkIjpudWxsLCJpYXQiOjE3MzY0NTUzOTAsImV4cCI6MTczNjQ1NjI5MH0.7SQjCbinNRsBLFVlnrE_ZIxt55XIf-IRzvwuwWFGWfA",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"schoolId\": \"677f40d68169f2e8e7f5502b\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_ULR}}/school/getSchoolAdmins",
+							"host": [
+								"{{BASE_ULR}}"
+							],
+							"path": [
+								"school",
+								"getSchoolAdmins"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getStudents",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzdlZGFiNjViNzg5MjA1MjViM2E0M2EiLCJyb2xlIjoic3VwZXJBZG1pbiIsInNjaG9vbElkIjpudWxsLCJpYXQiOjE3MzY0NTUzOTAsImV4cCI6MTczNjQ1NjI5MH0.7SQjCbinNRsBLFVlnrE_ZIxt55XIf-IRzvwuwWFGWfA",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"schoolId\": \"677f40d68169f2e8e7f5502b\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_ULR}}/school/getSchoolAdmins",
+							"host": [
+								"{{BASE_ULR}}"
+							],
+							"path": [
+								"school",
+								"getSchoolAdmins"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "deleteSchool",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzdlZGFiNjViNzg5MjA1MjViM2E0M2EiLCJyb2xlIjoic3VwZXJBZG1pbiIsInNjaG9vbElkIjpudWxsLCJpYXQiOjE3MzY0NTUzOTAsImV4cCI6MTczNjQ1NjI5MH0.7SQjCbinNRsBLFVlnrE_ZIxt55XIf-IRzvwuwWFGWfA",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"schoolId\": \"677f40d68169f2e8e7f5502b\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_ULR}}/school/deleteSchool",
+							"host": [
+								"{{BASE_ULR}}"
+							],
+							"path": [
+								"school",
+								"deleteSchool"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getSchools",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzdlZGFiNjViNzg5MjA1MjViM2E0M2EiLCJyb2xlIjoic3VwZXJBZG1pbiIsInNjaG9vbElkIjpudWxsLCJpYXQiOjE3MzY0NTQ2ODYsImV4cCI6MTczNjQ1NTU4Nn0.-8NhoiHHa8E3yz_KWYhZosmWRLNh3Jhk6GerI83fXT4",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BASE_ULR}}/school/getSchools",
+							"host": [
+								"{{BASE_ULR}}"
+							],
+							"path": [
+								"school",
+								"getSchools"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Classroom",
+			"item": [
+				{
+					"name": "createClassroom",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzgwMzQyMjZiYzhlZjhlZDE2ODZmYzEiLCJyb2xlIjoic2Nob29sQWRtaW4iLCJzY2hvb2xJZCI6IjY3N2Y0MGQ2ODE2OWYyZThlN2Y1NTAyYiIsImlhdCI6MTczNjQ1NjA3MywiZXhwIjoxNzM2NDU2OTczfQ.W9fMeDXivOoz-gpSA2beq_5z_fRbtI6QUwd54ZmAveI",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"schoolId\": \"677f40d68169f2e8e7f5502b\",\n    \"name\": \"Grade 10 - b\",\n    \"capacity\": 30,\n    \"academicYear\": \"2024 - 2025\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_ULR}}/classroom/createClassroom",
+							"host": [
+								"{{BASE_ULR}}"
+							],
+							"path": [
+								"classroom",
+								"createClassroom"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "updateClassroom",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzgwMzQyMjZiYzhlZjhlZDE2ODZmYzEiLCJyb2xlIjoic2Nob29sQWRtaW4iLCJzY2hvb2xJZCI6IjY3N2Y0MGQ2ODE2OWYyZThlN2Y1NTAyYiIsImlhdCI6MTczNjQ1NjA3MywiZXhwIjoxNzM2NDU2OTczfQ.W9fMeDXivOoz-gpSA2beq_5z_fRbtI6QUwd54ZmAveI",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"classroomId\": \"6780381f07a3f02524f38675\",\n    \"schoolId\": \"677f40d68169f2e8e7f5502b\",\n    \"name\": \"Grade 10 - F\",\n    \"capacity\": 30,\n    \"academicYear\": \"2026 - 2025\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_ULR}}/classroom/updateClassroom",
+							"host": [
+								"{{BASE_ULR}}"
+							],
+							"path": [
+								"classroom",
+								"updateClassroom"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getClassrooms",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzgwMzQyMjZiYzhlZjhlZDE2ODZmYzEiLCJyb2xlIjoic2Nob29sQWRtaW4iLCJzY2hvb2xJZCI6IjY3N2Y0MGQ2ODE2OWYyZThlN2Y1NTAyYiIsImlhdCI6MTczNjQ1NjA3MywiZXhwIjoxNzM2NDU2OTczfQ.W9fMeDXivOoz-gpSA2beq_5z_fRbtI6QUwd54ZmAveI",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"schoolId\": \"677f40d68169f2e8e7f5502b\",\n    \"name\": \"Grade 10 - A\",\n    \"capacity\": 30,\n    \"academicYear\": 2024\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_ULR}}/classroom/getClassrooms",
+							"host": [
+								"{{BASE_ULR}}"
+							],
+							"path": [
+								"classroom",
+								"getClassrooms"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getClassroomById",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzgwMzQyMjZiYzhlZjhlZDE2ODZmYzEiLCJyb2xlIjoic2Nob29sQWRtaW4iLCJzY2hvb2xJZCI6IjY3N2Y0MGQ2ODE2OWYyZThlN2Y1NTAyYiIsImlhdCI6MTczNjQ1NjA3MywiZXhwIjoxNzM2NDU2OTczfQ.W9fMeDXivOoz-gpSA2beq_5z_fRbtI6QUwd54ZmAveI",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"schoolId\": \"677f40d68169f2e8e7f5502b\",\n    \"classroomId\": \"6780381f07a3f02524f38675\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_ULR}}/classroom/getClassroomById",
+							"host": [
+								"{{BASE_ULR}}"
+							],
+							"path": [
+								"classroom",
+								"getClassroomById"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getStudents",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzgwMzQyMjZiYzhlZjhlZDE2ODZmYzEiLCJyb2xlIjoic2Nob29sQWRtaW4iLCJzY2hvb2xJZCI6IjY3N2Y0MGQ2ODE2OWYyZThlN2Y1NTAyYiIsImlhdCI6MTczNjQ1NjA3MywiZXhwIjoxNzM2NDU2OTczfQ.W9fMeDXivOoz-gpSA2beq_5z_fRbtI6QUwd54ZmAveI",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"schoolId\": \"677f40d68169f2e8e7f5502b\",\n    \"classroomId\": \"6780381f07a3f02524f38675\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_ULR}}/classroom/getStudents",
+							"host": [
+								"{{BASE_ULR}}"
+							],
+							"path": [
+								"classroom",
+								"getStudents"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "deleteClassroom",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzgwMzQyMjZiYzhlZjhlZDE2ODZmYzEiLCJyb2xlIjoic2Nob29sQWRtaW4iLCJzY2hvb2xJZCI6IjY3N2Y0MGQ2ODE2OWYyZThlN2Y1NTAyYiIsImlhdCI6MTczNjQ1NzQyNCwiZXhwIjoxNzM2NDU4MzI0fQ.7VlTf0du8URsJ_Kix2z6JrUg4EcAAoXngqHcgSLpZNE",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"schoolId\": \"677f40d68169f2e8e7f5502b\",\n    \"classroomId\": \"6780381f07a3f02524f38675\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_ULR}}/classroom/deleteClassroom",
+							"host": [
+								"{{BASE_ULR}}"
+							],
+							"path": [
+								"classroom",
+								"deleteClassroom"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "addStudentToClassroom",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzgwMzQyMjZiYzhlZjhlZDE2ODZmYzEiLCJyb2xlIjoic2Nob29sQWRtaW4iLCJzY2hvb2xJZCI6IjY3N2Y0MGQ2ODE2OWYyZThlN2Y1NTAyYiIsImlhdCI6MTczNjQ1NjA3MywiZXhwIjoxNzM2NDU2OTczfQ.W9fMeDXivOoz-gpSA2beq_5z_fRbtI6QUwd54ZmAveI",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"schoolId\": \"677f40d68169f2e8e7f5502b\",\n    \"classroomId\": \"6780381f07a3f02524f38675\",\n    \"studentId\": \"6780381f07a3f02524f38175\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_ULR}}/classroom/addStudentToClassroom",
+							"host": [
+								"{{BASE_ULR}}"
+							],
+							"path": [
+								"classroom",
+								"addStudentToClassroom"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "removeStudentFromClassroom",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzgwMzQyMjZiYzhlZjhlZDE2ODZmYzEiLCJyb2xlIjoic2Nob29sQWRtaW4iLCJzY2hvb2xJZCI6IjY3N2Y0MGQ2ODE2OWYyZThlN2Y1NTAyYiIsImlhdCI6MTczNjQ1NjA3MywiZXhwIjoxNzM2NDU2OTczfQ.W9fMeDXivOoz-gpSA2beq_5z_fRbtI6QUwd54ZmAveI",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"schoolId\": \"677f40d68169f2e8e7f5502b\",\n    \"classroomId\": \"6780381f07a3f02524f38675\",\n    \"studentId\": \"6780381f07a3f02524f38175\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_ULR}}/classroom/removeStudentFromClassroom",
+							"host": [
+								"{{BASE_ULR}}"
+							],
+							"path": [
+								"classroom",
+								"removeStudentFromClassroom"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "BASE_ULR",
+			"value": "http://localhost:5111/api",
+			"type": "string"
+		}
+	]
+}

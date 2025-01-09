@@ -1,7 +1,10 @@
-const config                = require('./config/index.config.js');
-const Cortex                = require('ion-cortex');
-const ManagersLoader        = require('./loaders/ManagersLoader.js');
-const Aeon                  = require('aeon-machine');
+const config = require('./config/index.config.js');
+const ManagersLoader = require('./loaders/ManagersLoader.js');
+const connectDB = require('./connect/mongo');
+
+const MongoDB = connectDB({
+    uri: config.dotEnv.MONGO_URI
+});
 
 process.on('uncaughtException', err => {
     console.log(`Uncaught Exception:`)
@@ -15,30 +18,20 @@ process.on('unhandledRejection', (reason, promise) => {
     process.exit(1)
 })
 
-const cache      = require('./cache/cache.dbh')({
-    prefix: config.dotEnv.CACHE_PREFIX ,
+const cache = require('./cache/cache.dbh')({
+    prefix: config.dotEnv.CACHE_PREFIX,
     url: config.dotEnv.CACHE_REDIS
 });
 
-const Oyster  = require('oyster-db');
-const oyster     = new Oyster({ 
-    url: config.dotEnv.OYSTER_REDIS, 
-	prefix: config.dotEnv.OYSTER_PREFIX 
-});
-
-const cortex     = new Cortex({
-    prefix: config.dotEnv.CORTEX_PREFIX,
-    url: config.dotEnv.CORTEX_REDIS,
-    type: config.dotEnv.CORTEX_TYPE,
-    state: ()=>{
-        return {} 
+const noOpHandler = {
+    get: (target, prop) => {
+        if (typeof prop === 'string') return () => { };
+        return target[prop];
     },
-    activeDelay: "50",
-    idlDelay: "200",
-});
-const aeon = new Aeon({ cortex , timestampFrom: Date.now(), segmantDuration: 500 });
+};
+const cortex = new Proxy({}, noOpHandler);
 
-const managersLoader = new ManagersLoader({config, cache, cortex, oyster, aeon});
+const managersLoader = new ManagersLoader({ config, cache, cortex, MongoDB });
 const managers = managersLoader.load();
 
 managers.userServer.run();
