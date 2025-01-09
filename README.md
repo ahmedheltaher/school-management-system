@@ -68,7 +68,7 @@ const ROLE_PERMISSIONS = {
 
 ## Deployment Details  
 
-- **Live Server**: [Access the API]()  
+- **Live Server**: [Access the API](https://school-management-system-production-23a8.up.railway.app/)  
 - **Postman Collection**: [Download Here](./school-management-system.postman_collection.json)  
 
 ---
