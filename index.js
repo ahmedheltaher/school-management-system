@@ -3,7 +3,9 @@ const ManagersLoader = require('./loaders/ManagersLoader.js');
 const connectDB = require('./connect/mongo');
 
 const MongoDB = connectDB({
-    uri: config.dotEnv.MONGO_URI
+    uri: config.dotEnv.MONGO_URI,
+    username: config.dotEnv.MONGO_USERNAME,
+    password: config.dotEnv.MONGO_PASSWORD
 });
 
 process.on('uncaughtException', err => {
