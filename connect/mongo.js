@@ -3,7 +3,7 @@ mongoose.Promise = global.Promise;
 
 module.exports = ({ uri, username, password, connectionOptions = {} }) => {
   const authUri = username && password
-    ? `mongodb://${username}:${encodeURIComponent(password)}@${uri}`
+    ? `mongodb+srv://${username}:${encodeURIComponent(password)}@${uri}`
     : `mongodb://${uri}`;
 
 
