@@ -24,7 +24,7 @@ const MONGO_URI = process.env.MONGO_URI || `localhost:27017/${SERVICE_NAME}`;
 const MONGO_USERNAME = process.env.MONGO_USERNAME || null;
 const MONGO_PASSWORD = process.env.MONGO_PASSWORD || null;
 
-const config = require(`./envs/${ENV}.js`);
+const config = {} //require(`./envs/${ENV}.js`);
 
 const accessTokenSecret = process.env.LONG_TOKEN_SECRET || null;
 const refreshTokenSecret = process.env.SHORT_TOKEN_SECRET || null;
