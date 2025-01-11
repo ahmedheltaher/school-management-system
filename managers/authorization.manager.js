@@ -14,19 +14,25 @@ const ACTIONS = {
 	MANAGE: 'manage'
 };
 
+const ROLES = {
+	SUPER_ADMIN: 'superAdmin',
+	SCHOOL_ADMIN: 'schoolAdmin',
+	STUDENT: 'student'
+}
+
 const ROLE_PERMISSIONS = {
-	superAdmin: {
+	[ROLES.SUPER_ADMIN]: {
 		[RESOURCES.SCHOOL]: [ACTIONS.CREATE, ACTIONS.READ, ACTIONS.UPDATE, ACTIONS.DELETE, ACTIONS.LIST, ACTIONS.MANAGE],
 		[RESOURCES.USER]: [ACTIONS.CREATE, ACTIONS.READ, ACTIONS.UPDATE, ACTIONS.DELETE, ACTIONS.LIST, ACTIONS.MANAGE],
 		[RESOURCES.CLASSROOM]: [ACTIONS.READ, ACTIONS.LIST],
 		[RESOURCES.STUDENT]: [ACTIONS.READ, ACTIONS.LIST]
 	},
-	schoolAdmin: {
+	[ROLES.SCHOOL_ADMIN]: {
 		[RESOURCES.SCHOOL]: [ACTIONS.READ],
 		[RESOURCES.CLASSROOM]: [ACTIONS.CREATE, ACTIONS.READ, ACTIONS.UPDATE, ACTIONS.DELETE, ACTIONS.LIST, ACTIONS.MANAGE],
 		[RESOURCES.STUDENT]: [ACTIONS.CREATE, ACTIONS.READ, ACTIONS.UPDATE, ACTIONS.DELETE, ACTIONS.LIST, ACTIONS.MANAGE],
 	},
-	student: {
+	[ROLES.STUDENT]: {
 		[RESOURCES.SCHOOL]: [ACTIONS.READ],
 		[RESOURCES.CLASSROOM]: [ACTIONS.READ],
 		[RESOURCES.STUDENT]: [ACTIONS.READ, ACTIONS.UPDATE], // Can only read/update their own profile
@@ -65,10 +71,10 @@ class AuthorizationManager {
 
 		// Role-specific context checks
 		switch (user.role) {
-			case 'schoolAdmin':
+			case ROLES.SCHOOL_ADMIN:
 				return user.schoolId.toString() === context.schoolId.toString();
 
-			case 'student':
+			case ROLES.STUDENT:
 				// Students can only access their own resources
 				if (context.studentId) {
 					return user.studentId.toString() === context.studentId.toString();
@@ -86,5 +92,6 @@ class AuthorizationManager {
 module.exports = {
 	AuthorizationManager,
 	RESOURCES,
-	ACTIONS
+	ACTIONS,
+	ROLES
 };

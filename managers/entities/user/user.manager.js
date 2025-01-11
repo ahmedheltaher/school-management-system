@@ -1,6 +1,7 @@
-const { RESOURCES, ACTIONS } = require("../../authorization.manager");
+const { ErrorTypes, ErrorManager } = require('../../error.manager');
+const { RESOURCES, ACTIONS, ROLES } = require('../../authorization.manager');
 
-module.exports = class UserManager {
+class UserManager {
     constructor({ managers, validators, mongoModels } = {}) {
         this.userValidators = validators.user;
         this.userModel = mongoModels.user;
@@ -11,80 +12,92 @@ module.exports = class UserManager {
     }
 
     async createUser({ firstName, lastName, email, password, role, schoolId, __accessToken }) {
-        console.log("󱓞 ~ UserManager ~ createUser ~ __accessToken:", __accessToken)
-        const actionInitiatorRole = __accessToken.role;
-        const isAuthorized = this.authorizationManager.hasPermission({ role: actionInitiatorRole }, RESOURCES.USER, ACTIONS.CREATE);
-        if (!isAuthorized) {
-            return { ok: false, code: 403, errors: 'unauthorized' };
+        if (!this._hasPermission(__accessToken.role, RESOURCES.USER, ACTIONS.CREATE)) {
+            return this._unauthorized();
         }
+
         const user = { firstName, lastName, email, password, role, schoolId };
-        const validation = await this.userValidators.createUser(user);
-        if (validation) return validation;
+        const validationError = await this.userValidators.createUser(user);
+        if (validationError) return validationError;
 
-        if (role === 'schoolAdmin' && !schoolId) {
-            return { ok: false, code: 400, errors: 'schoolId is required for schoolAdmin' };
-        }
-        if (role === 'schoolAdmin') {
-            const school = await this.schoolModel.findOne({ _id: schoolId });
-            if (!school) {
-                return { ok: false, code: 400, errors: 'school not found' };
-            }
+        if (role === ROLES.SCHOOL_ADMIN) {
+            const schoolValidationError = await this._validateSchool(schoolId);
+            if (schoolValidationError) return schoolValidationError;
         }
 
-        const userExists = await this.userModel.findOne({ email });
-        if (userExists) {
-            return { ok: false, code: 400, errors: 'user already exists' };
+        if (await this.userModel.findOne({ email })) {
+            return ErrorManager.conflict(ErrorTypes.USER_EXISTS);
         }
 
         const createdUser = await this.userModel.create(user);
-        const { accessToken, refreshToken, expiresIn } = this.tokenManager.generateAuthTokens({ userId: createdUser._id, role: createdUser.role, schoolId: createdUser.schoolId });
-        return { user: this._sanitizeUser(createdUser.toJSON()), accessToken, refreshToken, expiresIn };
+        const tokens = this.tokenManager.generateAuthTokens({
+            userId: createdUser._id,
+            role: createdUser.role,
+            schoolId: createdUser.schoolId
+        });
+
+        return { user: this._sanitizeUser(createdUser.toJSON()), ...tokens };
     }
 
     async login({ email, password }) {
-        const userInput = { email, password };
-        const validation = await this.userValidators.login(userInput);
-        if (validation) return validation;
+        const validationError = await this.userValidators.login({ email, password });
+        if (validationError) return validationError;
 
         const user = await this.userModel.findOne({ email });
-        if (!user) {
-            return { ok: false, code: 400, errors: 'user not found' };
+        if (!user || !(await user.comparePassword(password, user.password))) {
+            return ErrorManager.wrongCredentials();
         }
 
-        const passwordMatch = await user.comparePassword(password, user.password);
-        if (!passwordMatch) {
-            return { ok: false, code: 400, errors: 'invalid password' };
-        }
-
-        const { accessToken, refreshToken, expiresIn } = await this.tokenManager.generateAuthTokens({ userId: user._id, role: user.role, schoolId: user.schoolId });
-        return { accessToken, refreshToken, expiresIn };
+        return this.tokenManager.generateAuthTokens({
+            userId: user._id,
+            role: user.role,
+            schoolId: user.schoolId
+        });
     }
 
-    // This method is used to seed the super admin user
-    // This method is not exposed via HTTP
     async seedSuperAdmin() {
+        const superAdmin = {
+            firstName: 'super',
+            lastName: 'admin',
+            email: 'admin@schools.com',
+            password: 'password',
+            role: ROLES.SUPER_ADMIN,
+            schoolId: null
+        };
+
+        if (await this.userModel.findOne({ email: superAdmin.email })) {
+            console.log('Super admin already seeded');
+            return;
+        }
+
         try {
-            const superAdmin = {
-                firstName: 'super',
-                lastName: 'admin',
-                email: 'admin@schools.com',
-                password: 'password',
-                role: 'superAdmin',
-                schoolId: null
-            };
-            const userExists = await this.userModel.findOne({ email: superAdmin.email });
-            if (userExists) {
-                return { ok: true, data: 'super admin already exists' };
-            }
-            const createdUser = await this.userModel.create(superAdmin);
-            console.log('super admin seeded');
+            await this.userModel.create(superAdmin);
+            console.log('Super admin seeded');
         } catch (error) {
-            console.log('failed to seed super admin', error);
+            console.error('Failed to seed super admin:', error);
         }
     }
 
     _sanitizeUser(user) {
-        const { password, ...sanitizedUser } = user;
+        const { password, _id, __v, ...sanitizedUser } = user;
         return sanitizedUser;
     }
+
+    _hasPermission(role, resource, action) {
+        return this.authorizationManager.hasPermission({ role }, resource, action);
+    }
+
+    _unauthorized() {
+        return ErrorManager.unauthorized();
+    }
+
+    async _validateSchool(schoolId) {
+        if (!schoolId) return ErrorManager.invalidInput(ErrorTypes.SCHOOL_ID_REQUIRED);
+        const school = await this.schoolModel.findOne({ _id: schoolId });
+        if (!school) return ErrorManager.notFound(ErrorTypes.SCHOOL_NOT_FOUND);
+        return null;
+    }
+
 }
+
+module.exports = UserManager;

@@ -13,8 +13,7 @@ const systemArch = require('../static_arch/main.system');
 const TokenManager = require('../managers/token/Token.manager');
 const SharkFin = require('../managers/shark_fin/SharkFin.manager');
 const TimeMachine = require('../managers/time_machine/TimeMachine.manager');
-const { AuthorizationManager, RESOURCES, ACTIONS } = require('../managers/authorization.manager');
-
+const { AuthorizationManager } = require('../managers/authorization.manager');
 const UserManager = require('../managers/entities/user/user.manager');
 const SchoolManager = require('../managers/entities/school/school.manager');
 const ClassroomManager = require('../managers/entities/classroom/classroom.manager');
@@ -41,9 +40,7 @@ module.exports = class ManagersLoader {
             managers: this.managers,
             validators: this.validators,
             mongoModels: this.mongoModels,
-            resourceNodes: this.resourceNodes,
-            RESOURCES,
-            ACTIONS
+            resourceNodes: this.resourceNodes
         };
 
     }
